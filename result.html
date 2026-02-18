@@ -1,0 +1,14 @@
+<div class="result-container">
+  <h2>Scanned Product</h2>
+  <p><strong>Barcode:</strong> {{ barcode_data }}</p>
+
+  {% if product %}
+  <p><strong>Name:</strong> {{ product.name }}</p>
+  <p><strong>Calories:</strong> {{ product.calories }} kcal</p>
+  <p><strong>Protein:</strong> {{ product.protein }} g</p>
+  <p><strong>Fat:</strong> {{ product.fat }} g</p>
+  <p><strong>Carbohydrates:</strong> {{ product.carbohydrates }} g</p>
+  {% else %}
+  <p style="color: red">Product not found in the database.</p>
+  {% endif %}
+</div>

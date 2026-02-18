@@ -1,0 +1,618 @@
+<!-- templates/product_info.html -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Product Nutrition Information</title>
+    <style>
+      body {
+        font-family: "Segoe UI", Arial, sans-serif;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        text-align: center;
+        background-color: #f8f9fa;
+        color: #333;
+      }
+      h1 {
+        color: #28a745;
+        margin-bottom: 5px;
+      }
+      .subtitle {
+        color: #6c757d;
+      }
+      .product-card {
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        margin-bottom: 30px;
+      }
+      .product-header {
+        padding: 15px 20px;
+        display: flex;
+        align-items: center;
+      }
+      .product-image {
+        width: 100px;
+        height: 100px;
+        object-fit: contain;
+        background-color: white;
+        border-radius: 4px;
+        margin-left: 15px;
+      }
+      .product-info {
+        flex: 1;
+      }
+      .product-name {
+        font-size: 24px;
+        margin: 0;
+      }
+      .product-brand {
+        opacity: 0.9;
+        font-style: italic;
+      }
+      .product-barcode {
+        font-family: monospace;
+        background-color: #e9ecef;
+        padding: 5px 10px;
+        border-radius: 4px;
+        display: inline-block;
+        margin-top: 10px;
+        font-size: 14px;
+      }
+      .nutrition-score {
+        background-color: #f8a100;
+        color: white;
+        padding: 15px;
+        border-radius: 8px;
+        text-align: center;
+        max-width: 100px;
+        margin-left: auto;
+      }
+      .score-value {
+        font-size: 32px;
+        font-weight: bold;
+        margin: 0;
+      }
+      .score-label {
+        margin: 0;
+        font-size: 14px;
+      }
+      .tab-controls {
+        display: flex;
+        margin-bottom: 20px;
+      }
+      .tab-button {
+        flex: 1;
+        background-color: #e9ecef;
+        border: none;
+        padding: 12px;
+        text-align: center;
+        font-weight: bold;
+        border-radius: 20px;
+        margin: 0 5px;
+        cursor: pointer;
+      }
+      .tab-button.active {
+        background-color: #7b68ee;
+        color: white;
+      }
+      .section-title {
+        font-size: 24px;
+        margin: 20px 0;
+        display: flex;
+        align-items: center;
+      }
+      .section-title .emoji {
+        margin-left: 10px;
+        font-size: 28px;
+      }
+      .nutrition-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 0;
+        border-bottom: 1px solid #e9ecef;
+      }
+      .nutrition-name {
+        display: flex;
+        align-items: center;
+      }
+      .nutrition-icon {
+        width: 24px;
+        height: 24px;
+        margin-right: 15px;
+        color: #dc3545;
+      }
+      .nutrition-value {
+        font-weight: bold;
+        color: #dc3545;
+      }
+      .nutrition-value.good {
+        color: #28a745;
+      }
+      .nutrition-value.warning {
+        color: #f8a100;
+      }
+      .nutrition-bar {
+        width: 100%;
+        height: 8px;
+        background-color: #e9ecef;
+        border-radius: 4px;
+        position: relative;
+        margin: 10px 0;
+      }
+      .nutrition-bar-fill {
+        height: 100%;
+        border-radius: 4px;
+        background: linear-gradient(to right, #28a745, #ffc107, #dc3545);
+      }
+      .nutrition-marker {
+        position: absolute;
+        top: -10px;
+        transform: translateX(-50%);
+        width: 0;
+        height: 0;
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        border-top: 8px solid #6c757d;
+      }
+      .percentage {
+        font-size: 14px;
+        color: #6c757d;
+        margin-top: 5px;
+      }
+      .serving-options {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 20px;
+      }
+      .serving-option {
+        padding: 10px 15px;
+        background-color: #e9ecef;
+        border-radius: 8px;
+        text-align: center;
+        width: 60px;
+      }
+      .serving-option.active {
+        background-color: #7b68ee;
+        color: white;
+      }
+      .serving-gauge {
+        width: 180px;
+        height: 90px;
+        margin: 20px auto;
+        position: relative;
+      }
+      .gauge-arc {
+        width: 180px;
+        height: 90px;
+        border-radius: 90px 90px 0 0;
+        background-color: #e9ecef;
+        overflow: hidden;
+        position: relative;
+      }
+      .gauge-fill {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        border-radius: 90px 90px 0 0;
+        background: conic-gradient(#f8d724 0% 50%, #e9ecef 50% 100%);
+        transform-origin: bottom center;
+        transform: rotate(-90deg);
+      }
+      .gauge-label {
+        position: absolute;
+        bottom: -30px;
+        right: 0;
+        color: #f8d724;
+        font-weight: bold;
+        font-size: 18px;
+      }
+      .btn {
+        display: inline-block;
+        padding: 10px 20px;
+        background-color: #28a745;
+        color: white;
+        text-decoration: none;
+        border-radius: 4px;
+        margin-top: 20px;
+        text-align: center;
+        transition: background-color 0.3s;
+      }
+      .btn:hover {
+        background-color: #218838;
+      }
+      .action-buttons {
+        text-align: center;
+        margin-top: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Nutrition Scanner</h1>
+      <p class="subtitle">Product Information</p>
+    </header>
+
+    <div class="product-card">
+      <div class="product-header">
+        <img
+          src="{{ product.image_url }}"
+          alt="{{ product.name }}"
+          class="product-image"
+        />
+        <div class="product-info">
+          <h2 class="product-name">{{ product.name }}</h2>
+          <div class="product-brand">{{ product.brand }}</div>
+          <div class="product-barcode">Barcode: {{ barcode }}</div>
+          <div class="processing-badge">{{ product.processing_level }}</div>
+        </div>
+        <div class="nutrition-score">
+          <p class="score-value">{{ product.nutrition_score.value }}</p>
+          <p class="score-label">Out of 5</p>
+          <p class="score-label">{{ product.nutrition_score.label }}</p>
+        </div>
+      </div>
+
+      <div class="product-content" style="padding: 0 20px 20px 20px">
+        <div class="tab-controls"></div>
+
+        <h3 class="section-title">
+          What Concerns Us <span class="emoji">😯</span>
+        </h3>
+
+        <!-- Processing Level -->
+        <div class="nutrition-item">
+          <div class="nutrition-name">
+            <svg
+              class="nutrition-icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <circle cx="12" cy="12" r="10"></circle>
+              <path d="M12 8v4M12 16h.01"></path>
+            </svg>
+            Processing Level
+          </div>
+          <div class="nutrition-value">{{ product.processing_level }}</div>
+        </div>
+
+        <!-- Additives -->
+        <div class="nutrition-item">
+          <div class="nutrition-name">
+            <svg
+              class="nutrition-icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path
+                d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"
+              ></path>
+            </svg>
+            Additives
+          </div>
+          <div class="nutrition-value">{{ product.additives_count }}</div>
+        </div>
+
+        <!-- Energy -->
+        <div class="nutrition-item">
+          <div class="nutrition-name">
+            <svg
+              class="nutrition-icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path>
+            </svg>
+            Energy
+          </div>
+          <div class="nutrition-value">
+            {{ product.nutrition.calories }} kcal
+          </div>
+        </div>
+
+        <!-- Total Fat -->
+        <div class="nutrition-item">
+          <div class="nutrition-name">
+            <svg
+              class="nutrition-icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path
+                d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
+              ></path>
+            </svg>
+            Total Fat
+          </div>
+          <div class="nutrition-value">{{ product.nutrition.fat }} g</div>
+        </div>
+
+        <!-- Saturated Fat -->
+        <div class="nutrition-item">
+          <div class="nutrition-name">
+            <svg
+              class="nutrition-icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <circle cx="12" cy="12" r="10"></circle>
+              <path d="M8 14s1.5 2 4 2 4-2 4-2"></path>
+              <line x1="9" y1="9" x2="9.01" y2="9"></line>
+              <line x1="15" y1="9" x2="15.01" y2="9"></line>
+            </svg>
+            Saturated Fat
+          </div>
+          <div class="nutrition-value">
+            {{ product.nutrition.saturated_fat }} g
+          </div>
+        </div>
+
+        <!-- Sodium -->
+        <div class="nutrition-item">
+          <div class="nutrition-name">
+            <svg
+              class="nutrition-icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <polygon
+                points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"
+              ></polygon>
+            </svg>
+            Sodium
+          </div>
+          <div class="nutrition-value">{{ product.nutrition.sodium }} mg</div>
+        </div>
+
+        <h3 class="section-title">
+          What We Like <span class="emoji">😊</span>
+        </h3>
+
+        <!-- Total Sugars -->
+        <div class="nutrition-item">
+          <div class="nutrition-name">
+            <svg
+              class="nutrition-icon"
+              style="color: #28a745"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="M20 7h-7.5L9.5 3h-5L1 7h7.5L12 11h5l3-4Z"></path>
+              <path d="M2 17v-1a4 4 0 0 1 4-4h12a4 4 0 0 1 4 4v1"></path>
+            </svg>
+            Total Sugars
+          </div>
+          <div class="nutrition-value good">
+            {{ product.nutrition.sugar }} g
+          </div>
+        </div>
+
+        <div class="nutrition-bar">
+          <div
+            class="nutrition-bar-fill"
+            style="width: {{ sugar_percentage }}%"
+          ></div>
+          <div
+            class="nutrition-marker"
+            style="left: {{ sugar_percentage }}%"
+          ></div>
+        </div>
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            margin-top: 5px;
+            font-size: 12px;
+          "
+        >
+          <span>0</span>
+          <span>2.5</span>
+          <span>5</span>
+          <span>10</span>
+          <span>15</span>
+          <span>>50</span>
+        </div>
+
+        <!-- Added Sugars -->
+        <div class="nutrition-item" style="margin-top: 20px">
+          <div class="nutrition-name">
+            <svg
+              class="nutrition-icon"
+              style="color: #28a745"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="M12 3v18M3 12h18"></path>
+            </svg>
+            Added Sugars
+          </div>
+          <div class="nutrition-value good">
+            {{ product.nutrition.added_sugar }} g
+          </div>
+        </div>
+
+        <div class="percentage">
+          {{ sugar_percentage }}% of recommended daily intake
+        </div>
+
+        <div class="nutrition-bar">
+          <div
+            class="nutrition-bar-fill"
+            style="width: {{ sugar_percentage }}%"
+          ></div>
+          <div
+            class="nutrition-marker"
+            style="left: {{ sugar_percentage }}%"
+          ></div>
+        </div>
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            margin-top: 5px;
+            font-size: 12px;
+          "
+        >
+          <span>0</span>
+          <span>1.25</span>
+          <span>2.5</span>
+          <span>5</span>
+          <span>7.5</span>
+          <span>>25</span>
+        </div>
+
+        <!-- Trans Fat -->
+        <div class="nutrition-item" style="margin-top: 20px">
+          <div class="nutrition-name">
+            <svg
+              class="nutrition-icon"
+              style="color: #28a745"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="M17 18a5 5 0 0 1-10 0"></path>
+              <line x1="12" y1="2" x2="12" y2="9"></line>
+              <line x1="4.22" y1="10.22" x2="5.64" y2="11.64"></line>
+              <line x1="1" y1="18" x2="3" y2="18"></line>
+              <line x1="21" y1="18" x2="23" y2="18"></line>
+              <line x1="18.36" y1="11.64" x2="19.78" y2="10.22"></line>
+            </svg>
+            Trans Fat
+          </div>
+          <div class="nutrition-value good">
+            {{ product.nutrition.trans_fat }} g
+          </div>
+        </div>
+
+        <div class="percentage">
+          {{ trans_fat_percentage }}% of recommended daily intake
+        </div>
+
+        <div class="nutrition-bar">
+          <div
+            class="nutrition-bar-fill"
+            style="width: {{ trans_fat_percentage }}%";
+          ></div>
+          <div
+            class="nutrition-marker"
+            style="left: {{ trans_fat_percentage }}%"
+          ></div>
+        </div>
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            margin-top: 5px;
+            font-size: 12px;
+          "
+        >
+          <span>0</span>
+          <span>0.1</span>
+          <span>0.2</span>
+          <span>0.4</span>
+          <span>0.6</span>
+          <span>>2</span>
+        </div>
+
+        <!-- All Nutrients Button -->
+        <!-- <div
+          style="
+            margin-top: 20px;
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+          "
+        >
+          <span>All Nutrients</span>
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div> -->
+
+        <!-- All Ingredients Button -->
+        <!-- <div
+          style="
+            margin-top: 10px;
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+          "
+        >
+          <span>All Ingredients</span>
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div> -->
+        </div>
+      </div>
+    </div>
+
+    <div class="action-buttons">
+      <a href="/" class="btn">Scan Another Product</a>
+    </div>
+
+    <script>
+      // Simple script to toggle active tab
+      document.querySelectorAll(".tab-button").forEach((button) => {
+        button.addEventListener("click", function () {
+          document.querySelectorAll(".tab-button").forEach((btn) => {
+            btn.classList.remove("active");
+          });
+          this.classList.add("active");
+        });
+      });
+
+      // Toggle serving options
+      document.querySelectorAll(".serving-option").forEach((option) => {
+        option.addEventListener("click", function () {
+          document.querySelectorAll(".serving-option").forEach((opt) => {
+            opt.classList.remove("active");
+          });
+          this.classList.add("active");
+        });
+      });
+    </script>
+  </body>
+</html>

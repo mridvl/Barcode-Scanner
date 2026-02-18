@@ -1,0 +1,391 @@
+<!-- templates/detailed_info.html -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Detailed Food Information</title>
+    <style>
+      body {
+        font-family: "Segoe UI", Arial, sans-serif;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #f8f9fa;
+        color: #333;
+      }
+      header {
+        text-align: center;
+        margin-bottom: 30px;
+      }
+      h1 {
+        color: #28a745;
+        margin-bottom: 5px;
+      }
+      .subtitle {
+        color: #6c757d;
+      }
+      .product-card {
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        margin-bottom: 30px;
+      }
+      .product-header {
+        background-color: #28a745;
+        color: white;
+        padding: 15px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+      }
+      .product-header-content {
+        flex: 1;
+      }
+      .product-image {
+        width: 100px;
+        height: 100px;
+        object-fit: contain;
+        background-color: white;
+        border-radius: 4px;
+        margin-left: 15px;
+      }
+      .product-name {
+        font-size: 24px;
+        margin: 0;
+      }
+      .product-brand {
+        opacity: 0.9;
+        font-style: italic;
+      }
+      .product-barcode {
+        font-family: monospace;
+        background-color: #e9ecef;
+        padding: 5px 10px;
+        border-radius: 4px;
+        display: inline-block;
+        margin-top: 10px;
+        font-size: 14px;
+      }
+      .product-content {
+        padding: 20px;
+      }
+      .info-section {
+        margin-bottom: 25px;
+      }
+      .info-section h3 {
+        border-bottom: 2px solid #28a745;
+        padding-bottom: 8px;
+        color: #28a745;
+      }
+      .nutrition-facts {
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        padding: 15px;
+        background-color: #f8f9fa;
+      }
+      .nutrition-facts h3 {
+        text-align: center;
+        margin-top: 0;
+        border-bottom: 8px solid #333;
+        padding-bottom: 10px;
+        color: #333;
+      }
+      .nutrition-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px 0;
+        border-bottom: 1px solid #ddd;
+      }
+      .nutrition-row.serving {
+        font-style: italic;
+        color: #555;
+      }
+      .nutrition-row.calories {
+        font-size: 20px;
+        font-weight: bold;
+      }
+      .btn {
+        display: inline-block;
+        padding: 10px 20px;
+        background-color: #28a745;
+        color: white;
+        text-decoration: none;
+        border-radius: 4px;
+        margin-top: 20px;
+        text-align: center;
+        transition: background-color 0.3s;
+      }
+      .btn:hover {
+        background-color: #218838;
+      }
+      .action-buttons {
+        text-align: center;
+        margin-top: 20px;
+      }
+      .btn-secondary {
+        background-color: #6c757d;
+      }
+      .btn-secondary:hover {
+        background-color: #5a6268;
+      }
+      .badge {
+        display: inline-block;
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: bold;
+        margin-right: 5px;
+        margin-bottom: 5px;
+      }
+      .badge-success {
+        background-color: #28a745;
+        color: white;
+      }
+      .badge-warning {
+        background-color: #ffc107;
+        color: #212529;
+      }
+      .badge-danger {
+        background-color: #dc3545;
+        color: white;
+      }
+      .badge-info {
+        background-color: #17a2b8;
+        color: white;
+      }
+      .badge-secondary {
+        background-color: #6c757d;
+        color: white;
+      }
+      .processing-level {
+        display: flex;
+        align-items: center;
+        margin: 15px 0;
+      }
+      .processing-indicator {
+        display: flex;
+        margin-right: 15px;
+      }
+      .processing-dot {
+        width: 25px;
+        height: 25px;
+        border-radius: 50%;
+        margin-right: 5px;
+        background-color: #e9ecef;
+      }
+      .processing-dot.active {
+        background-color: #28a745;
+      }
+      .processing-dot.active.level-2 {
+        background-color: #ffc107;
+      }
+      .processing-dot.active.level-3 {
+        background-color: #fd7e14;
+      }
+      .processing-dot.active.level-4 {
+        background-color: #dc3545;
+      }
+      .additives-list {
+        display: flex;
+        flex-wrap: wrap;
+        margin-top: 10px;
+      }
+      .nutriscore {
+        display: flex;
+        align-items: center;
+        margin: 15px 0;
+      }
+      .nutriscore-letter {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 24px;
+        margin-right: 5px;
+        background-color: #e9ecef;
+        color: white;
+      }
+      .nutriscore-letter.score-a {
+        background-color: #038141;
+      }
+      .nutriscore-letter.score-b {
+        background-color: #85bb2f;
+      }
+      .nutriscore-letter.score-c {
+        background-color: #fecb02;
+        color: #333;
+      }
+      .nutriscore-letter.score-d {
+        background-color: #ee8100;
+      }
+      .nutriscore-letter.score-e {
+        background-color: #e63e11;
+      }
+      .nutriscore-letter.active {
+        border: 3px solid #333;
+        color: white;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Nutrition Scanner</h1>
+      <p class="subtitle">Detailed Product Information</p>
+    </header>
+
+    <div class="product-card">
+      <div class="product-header">
+        <div class="product-header-content">
+          <h2 class="product-name">{{ product.name }}</h2>
+          <div class="product-brand">{{ product.brand }}</div>
+          <div class="product-barcode">Barcode: {{ barcode }}</div>
+        </div>
+        {% if product.image_url %}
+        <img
+          src="{{ product.image_url }}"
+          alt="{{ product.name }}"
+          class="product-image"
+        />
+        {% endif %}
+      </div>
+
+      <div class="product-content">
+        <!-- Processing Level Section -->
+        <div class="info-section">
+          <h3>Processing Level</h3>
+          <div class="processing-level">
+            <div class="processing-indicator">
+              <div
+                class="processing-dot {% if product.processing.nova_group == 1 or product.processing.nova_group == '1' %}active{% endif %}"
+              ></div>
+              <div
+                class="processing-dot {% if product.processing.nova_group == 2 or product.processing.nova_group == '2' %}active level-2{% endif %}"
+              ></div>
+              <div
+                class="processing-dot {% if product.processing.nova_group == 3 or product.processing.nova_group == '3' %}active level-3{% endif %}"
+              ></div>
+              <div
+                class="processing-dot {% if product.processing.nova_group == 4 or product.processing.nova_group == '4' %}active level-4{% endif %}"
+              ></div>
+            </div>
+            <div>
+              <strong>NOVA Group {{ product.processing.nova_group }}</strong>:
+              {{ product.processing.processing_level }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Additives Section -->
+        <div class="info-section">
+          <h3>Additives</h3>
+          <p>
+            This product contains
+            <strong>{{ product.additives.count }} additives</strong>.
+          </p>
+          {% if product.additives.list %}
+          <div class="additives-list">
+            {% for additive in product.additives.list %}
+            <span class="badge badge-warning">{{ additive }}</span>
+            {% endfor %}
+          </div>
+          {% endif %}
+        </div>
+
+        <!-- Nutri-Score -->
+        <div class="info-section">
+          <h3>Nutri-Score</h3>
+          <div class="nutriscore">
+            <div
+              class="nutriscore-letter score-a {% if product.nutriscore == 'a' %}active{% endif %}"
+            >
+              A
+            </div>
+            <div
+              class="nutriscore-letter score-b {% if product.nutriscore == 'b' %}active{% endif %}"
+            >
+              B
+            </div>
+            <div
+              class="nutriscore-letter score-c {% if product.nutriscore == 'c' %}active{% endif %}"
+            >
+              C
+            </div>
+            <div
+              class="nutriscore-letter score-d {% if product.nutriscore == 'd' %}active{% endif %}"
+            >
+              D
+            </div>
+            <div
+              class="nutriscore-letter score-e {% if product.nutriscore == 'e' %}active{% endif %}"
+            >
+              E
+            </div>
+          </div>
+          <p>
+            Nutri-Score is a nutritional rating system that helps you make
+            healthier food choices.
+          </p>
+        </div>
+
+        <!-- Nutrition Facts Section -->
+        <div class="nutrition-facts">
+          <h3>Nutrition Facts</h3>
+
+          <div class="nutrition-row serving">
+            <div>Serving Size</div>
+            <div>{{ product.nutrition.serving_size }}</div>
+          </div>
+
+          <div class="nutrition-row calories">
+            <div>Calories</div>
+            <div>{{ product.nutrition.calories }} kcal</div>
+          </div>
+
+          <div class="nutrition-row">
+            <div>Total Fat</div>
+            <div>{{ product.nutrition.fat }}g</div>
+          </div>
+
+          <div class="nutrition-row">
+            <div style="padding-left: 20px">Saturated Fat</div>
+            <div>{{ product.nutrition.saturated_fat }}g</div>
+          </div>
+
+          <div class="nutrition-row">
+            <div>Sodium</div>
+            <div>{{ product.nutrition.sodium }}mg</div>
+          </div>
+
+          <div class="nutrition-row">
+            <div>Total Carbohydrates</div>
+            <div>{{ product.nutrition.carbs }}g</div>
+          </div>
+
+          <div class="nutrition-row">
+            <div style="padding-left: 20px">Dietary Fiber</div>
+            <div>{{ product.nutrition.fiber }}g</div>
+          </div>
+
+          <div class="nutrition-row">
+            <div style="padding-left: 20px">Sugars</div>
+            <div>{{ product.nutrition.sugar }}g</div>
+          </div>
+
+          <div class="nutrition-row">
+            <div>Protein</div>
+            <div>{{ product.nutrition.protein }}g</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="action-buttons">
+      <a href="/" class="btn">Scan Another Product</a>
+    </div>
+  </body>
+</html>
